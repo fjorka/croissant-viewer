@@ -57,7 +57,18 @@ locally in your browser; **nothing is uploaded anywhere**.
 - **Kaggle** pages don't embed Croissant (only a plain schema.org Dataset for SEO); their Croissant is
   a separate download. Use its "Download Croissant" button, then "Open file…".
 - **Double-clicking a local file to open it here** isn't automatic on macOS/Windows (Chrome's
-  `file_handlers` manifest key is ChromeOS-only). Workaround in the roadmap.
+  `file_handlers` manifest key is ChromeOS-only). A `file://` renderer is on the [roadmap](#roadmap).
+
+## Roadmap
+
+Rough ideas, not commitments — issues and suggestions welcome:
+
+- **Kaggle support** — fetch a dataset's Croissant from Kaggle's download endpoint (it isn't embedded
+  in the page).
+- **Open a local file by double-click** — a `file://` renderer so double-clicking a `.jsonld` (with
+  Chrome set as the default app and "Allow access to file URLs" enabled) opens it in the viewer.
+- **Auto-render raw Croissant URLs** — optionally beautify a raw `.json`/`.jsonld` tab with no click.
+- **Publish to the Chrome Web Store**, and Edge / Firefox ports.
 
 ## Contributing
 
