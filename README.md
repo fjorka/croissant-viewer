@@ -21,8 +21,9 @@ Croissant files are JSON-LD, which browsers display as raw text. This makes them
   each with a one-line plain-language description.
 - **Provenance as a lineage**, read top-down (dataset → activity → the chain it derives from),
   including embedded W3C PROV-O (used for e.g. HuBMAP donor → tissue → imaging → processing).
-- **Tab-scoped panel:** it belongs to the tab you opened it on; Chrome hides it when you leave and
-  restores it (with the cached Croissant) when you return.
+- **Tab-scoped panel:** it belongs to the tab you opened it on and closes when you switch tabs.
+  Click 🥐 again to open it on another tab (Chrome only lets a side panel open from a click, so it
+  can't auto-restore itself when you switch back).
 - **Full-tab view** for large datasets (the ⤢ button, and where opened files render).
 - Light + dark; a single transparent icon that works on both.
 

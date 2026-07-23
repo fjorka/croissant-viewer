@@ -1,6 +1,7 @@
-/* Side panel: render the Croissant for the active tab. A fresh 🥐 click triggers a live scan;
-   switching tabs shows that tab's cached result (or a prompt). No URL box, no host permissions
-   — activeTab only. */
+/* Side panel: render the Croissant for the ONE tab it was opened on ("owner" tab). Clicking 🥐
+   opens the panel and scans that tab. The panel is tab-scoped: as soon as you switch to any other
+   tab it closes itself (window.close()). Click 🥐 again on another tab to open a fresh one there.
+   No URL box, no host permissions — activeTab only. */
 
 // Injected into the page (self-contained). Returns {croissant} or {none, host}.
 async function scanFn(){
@@ -43,8 +44,9 @@ async function scanTab(tabId){
   }
 }
 
-async function refreshForActiveTab(){
-  const tabId = await activeTabId();
+// Show whatever the owner tab has: a fresh scan (just clicked), a cached result, or a prompt.
+async function refreshOwner(){
+  const tabId = window.__ownerTab;
   if(tabId == null){ showEmpty("Click the 🥐 toolbar icon on a page to scan it, or use “Open file…”."); return; }
   const { scanReq } = await chrome.storage.local.get("scanReq").catch(()=>({}));
   const fresh = scanReq && scanReq.tabId === tabId && (Date.now() - scanReq.at < 8000);
@@ -62,6 +64,11 @@ async function loadText(txt){
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Bind this panel to the tab it was opened on. The click set scanReq.tabId; fall back to the
+  // active tab if that's stale. This "owner" is fixed for the life of the panel.
+  const { scanReq } = await chrome.storage.local.get("scanReq").catch(()=>({}));
+  window.__ownerTab = (scanReq && (Date.now() - scanReq.at < 8000)) ? scanReq.tabId : await activeTabId();
+
   try{ const {theme} = await chrome.storage.local.get("theme"); if(theme) document.documentElement.setAttribute("data-theme", theme); }catch(e){}
   document.getElementById("theme").onclick = async () => {
     const cur = document.documentElement.getAttribute("data-theme");
@@ -78,22 +85,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.close();
   };
 
-  // a new 🥐 click flags a tab to scan
-  chrome.storage.onChanged.addListener(async (changes, area) => {
+  // Re-clicking 🥐 on the owner tab (to rescan) flags it again → scan.
+  chrome.storage.onChanged.addListener((changes, area) => {
     if(area === "local" && changes.scanReq && changes.scanReq.newValue){
-      const tabId = await activeTabId();
-      if(changes.scanReq.newValue.tabId === tabId) scanTab(changes.scanReq.newValue.tabId);
+      if(changes.scanReq.newValue.tabId === window.__ownerTab) scanTab(window.__ownerTab);
     }
   });
-  // the page this panel belongs to navigated → clear stale content
-  chrome.tabs.onUpdated.addListener(async (tid, info) => {
-    if(info.status === "loading" && tid === await activeTabId()){
+  // The owner tab navigated → clear stale content.
+  chrome.tabs.onUpdated.addListener((tid, info) => {
+    if(info.status === "loading" && tid === window.__ownerTab){
       window.__current = null; showEmpty("This page changed — click 🥐 to scan it.");
     }
   });
 
-  // follow the active tab: show its cached Croissant (or a prompt) when you switch tabs
-  chrome.tabs.onActivated.addListener(() => refreshForActiveTab());
+  // Tab-scoped: switching to any other tab closes this panel. Chrome won't let us re-open it
+  // without a click, so returning to the owner tab needs another 🥐 click.
+  chrome.tabs.onActivated.addListener((info) => {
+    if(window.__ownerTab != null && info.tabId !== window.__ownerTab) window.close();
+  });
 
-  refreshForActiveTab();
+  refreshOwner();
 });

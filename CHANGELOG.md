@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0 — 2026-07-23
+- Tab-scoped panel: the side panel now closes when you switch to a different tab (it belongs to the
+  tab you opened it on). Click 🥐 again to open it on another tab. Implemented by having the panel
+  close itself on tab switch, while keeping it globally enabled so opening stays reliable — this
+  avoids the `open()`-after-`await` gesture bug that broke the earlier tab-scoping attempt.
+- Note: Chrome only allows opening a side panel from a user click, so returning to the owner tab
+  does not auto-restore the panel — that's a platform limit, not a bug.
+
 ## 0.1.1 — 2026-07-23
 - Fix: side panel would not open (the tab-scoped experiment disabled the panel and called
   `sidePanel.open()` after an `await`, so it silently failed). The panel now opens reliably;
