@@ -34,7 +34,9 @@ Croissant files are JSON-LD, which browsers display as raw text. This makes them
 4. Click **Load unpacked** and select the **`extension/`** folder in this repo.
 5. Pin the 🥐 icon. Click it on a page to open the side panel.
 
-Reload the extension (↻ on its card) after pulling changes.
+If you're running it unpacked from a local clone, click the ↻ reload button on its card in
+`chrome://extensions` after you `git pull` new changes, so Chrome re-reads the updated files.
+(Store-installed copies update separately, when a new version is uploaded to the store.)
 
 ## Usage
 
