@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Croissant Viewer</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="panelbar">
+    <span class="ptitle">🥐 Croissant</span>
+    <span class="spacer"></span>
+    <label class="filebtn" title="Open a local .jsonld">Open file…<input id="file" type="file" accept=".json,.jsonld,application/json"></label>
+    <button id="theme" title="Light / dark">◐</button>
+    <button id="popout" title="Open in a full tab">⤢</button>
+  </div>
+
+  <div class="sub" id="subtitle">Scanning this tab…</div>
+  <div class="legend" id="legend"></div>
+  <div id="view"></div>
+</div>
+<script src="render-engine.js"></script>
+<script src="sidepanel.js"></script>
+</body>
+</html>
