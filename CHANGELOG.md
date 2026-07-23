@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 — 2026-07-23
+- Fix: side panel would not open (the tab-scoped experiment disabled the panel and called
+  `sidePanel.open()` after an `await`, so it silently failed). The panel now opens reliably;
+  it follows the active tab and shows cached results when you switch tabs.
+
 ## 0.1.0 — 2026-07-22
 Initial public release.
 

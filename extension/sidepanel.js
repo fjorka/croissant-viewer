@@ -1,6 +1,6 @@
-/* Side panel (tab-scoped): render the Croissant for the tab it belongs to.
-   On (re)show it uses the per-tab cache so a restored panel shows the right content;
-   a fresh 🥐 click triggers a live scan. No URL box, no host permissions — activeTab only. */
+/* Side panel: render the Croissant for the active tab. A fresh 🥐 click triggers a live scan;
+   switching tabs shows that tab's cached result (or a prompt). No URL box, no host permissions
+   — activeTab only. */
 
 // Injected into the page (self-contained). Returns {croissant} or {none, host}.
 async function scanFn(){
@@ -91,6 +91,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       window.__current = null; showEmpty("This page changed — click 🥐 to scan it.");
     }
   });
+
+  // follow the active tab: show its cached Croissant (or a prompt) when you switch tabs
+  chrome.tabs.onActivated.addListener(() => refreshForActiveTab());
 
   refreshForActiveTab();
 });
