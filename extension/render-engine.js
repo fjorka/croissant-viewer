@@ -178,15 +178,51 @@ const LEG=[["--l-meta","① Metadata","name, license, authors, DOI"],
   ["--l-rai","④ Responsible AI","collection story, limits"],["--l-prov","⑤ Provenance","W3C PROV-O lineage"],
   ["--l-sem","⑥ Semantic","column → ontology term"]];
 
+/* Which layers does THIS file actually carry? Used to grey out absent keys in the legend.
+   "present" means real data, not just that a section gets drawn (Resources/Structure always
+   render a placeholder section even when empty). */
+function hasRAI(d){
+  return ["dataCollection","dataCollectionType","dataCollectionRawData","dataPreprocessingProtocol",
+    "personalSensitiveInformation","dataLimitations","dataBiases","dataUseCases"]
+    .some(k=>pick(d,"rai:"+k,k));
+}
+function hasProv(d){
+  return !!(pick(d,"prov:wasGeneratedBy","wasGeneratedBy")||pick(d,"prov:wasDerivedFrom","wasDerivedFrom")
+    ||arr(pick(d,"hubmap:hasProcessedDataset")).length||arr(pick(d,"hubmap:processedInto")).length);
+}
+function hasSemantic(d){
+  return arr(pick(d,"recordSet","record_set")).some(r=>arr(pick(r,"field","fields")).some(f=>
+    pick(f,"equivalentProperty","equivalent_property") ||
+    arr(pick(f,"dataType","data_type")).some(x=>/^https?:/.test(String(x)))));
+}
+function presence(d){
+  return {
+    "--l-meta":  !!(pick(d,"name")||pick(d,"description")),
+    "--l-res":   arr(pick(d,"distribution")).length>0,
+    "--l-struct":arr(pick(d,"recordSet","record_set")).length>0,
+    "--l-rai":   hasRAI(d),
+    "--l-prov":  hasProv(d),
+    "--l-sem":   hasSemantic(d),
+  };
+}
+
 function render(d){
+  const box=document.getElementById("legendbox"); if(box) box.style.display="";
   const leg=document.getElementById("legend");
-  if(leg) leg.innerHTML=LEG.map(([c,t,x])=>`<div class="lg"><span class="swatch" style="background:var(${c})"></span><div><b>${t}</b><br>${x}</div></div>`).join("");
+  if(leg){ const pres=presence(d);
+    leg.innerHTML=LEG.map(([c,t,x])=>{
+      const on=pres[c]!==false;
+      const sw=on?`<span class="swatch" style="background:var(${c})"></span>`:`<span class="swatch hollow"></span>`;
+      return `<div class="lg ${on?"":"absent"}">${sw}<div><b>${t}</b><br>${x}${on?"":` <span class="na">— not in this file</span>`}</div></div>`;
+    }).join("");
+  }
   const sub=document.getElementById("subtitle");
   if(sub) sub.textContent=(pick(d,"name")||"Croissant dataset")+"  ·  "+(pick(d,"conformsTo")||"");
   document.getElementById("view").innerHTML=[renderMeta(d),renderRAI(d),renderProv(d),renderResources(d),renderStructure(d),
     `<details class="raw"><summary>Show raw JSON-LD</summary><pre>${esc(JSON.stringify(d,null,2))}</pre></details>`].join("");
 }
 function showEmpty(msg){
+  const box=document.getElementById("legendbox"); if(box) box.style.display="none";
   const leg=document.getElementById("legend"); if(leg) leg.innerHTML="";
   const sub=document.getElementById("subtitle"); if(sub) sub.textContent="No Croissant loaded";
   document.getElementById("view").innerHTML=`<div class="empty" style="padding:8px 2px">${esc(msg||"Open a Croissant using the controls above.")}</div>`;

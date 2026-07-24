@@ -17,8 +17,9 @@ Croissant files are JSON-LD, which browsers display as raw text. This makes them
 - **Reads a Croissant three ways:** a web page that embeds one (verified on
   [Hugging Face](https://huggingface.co/datasets) and [OpenML](https://www.openml.org/) dataset
   pages), a raw `croissant.json`/`.jsonld` URL open in a tab, or a local file.
-- **Six layers, color-coded:** Metadata, Resources, Structure, Responsible AI, Provenance, Semantic —
-  each with a one-line plain-language description.
+- **Six layers, color-coded** along a single gradient (Metadata → Resources → Structure →
+  Responsible AI → Provenance → Semantic). A collapsible color key explains them, and any layer a
+  given file doesn't contain is greyed out — so a metadata-only Croissant shows its shape at a glance.
 - **Provenance as a lineage**, read top-down (dataset → activity → the chain it derives from),
   including embedded W3C PROV-O (used for e.g. HuBMAP donor → tissue → imaging → processing).
 - **Tab-scoped panel:** it belongs to the tab you opened it on and closes when you switch tabs.
