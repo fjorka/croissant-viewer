@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0 — 2026-07-24
+- New color palette: the six layers now run along a single perceptual gradient (Metadata → Resources →
+  Structure → Responsible AI → Provenance → Semantic) instead of six unrelated hues. Fixes Structure
+  and Provenance previously both reading as green.
+- Link color is now its own token (`--link`), decoupled from the Metadata hue, so links stay clearly
+  blue regardless of the layer palette.
+- Legend is now a collapsible "Color key" (collapsed by default), so the dataset content is what you
+  see first and the key no longer looks like data.
+- Legend keys for layers a file doesn't contain are greyed out (hollow swatch + "not in this file"),
+  so a metadata-only Croissant visibly shows which layers are empty.
+
 ## 0.2.0 — 2026-07-23
 - Tab-scoped panel: the side panel now closes when you switch to a different tab (it belongs to the
   tab you opened it on). Click 🥐 again to open it on another tab. Implemented by having the panel
